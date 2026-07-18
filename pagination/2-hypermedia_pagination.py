@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
     """
     Return hypermedia pagination information.
