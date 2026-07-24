@@ -1,0 +1,1 @@
+This project covers the basics of ES6 and its modern JavaScript features.
