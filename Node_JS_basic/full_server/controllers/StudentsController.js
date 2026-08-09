@@ -1,28 +1,28 @@
-import { readDatabase } from '../utils';
+import readDatabase from '../utils';
 
 class StudentsController {
-  static getAllStudents(request, response) {
-    const database = process.argv[2];
+  static async getAllStudents(request, response) {
+    const database = process.argv[process.argv.length - 1];
 
-    readDatabase(database)
-      .then((fields) => {
-        let output = 'This is the list of our students\n';
+    try {
+      const students = await readDatabase(database);
 
-        Object.keys(fields)
-          .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-          .forEach((field) => {
-            output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-          });
+      let output = 'This is the list of our students\n';
 
-        response.status(200).send(output.trimEnd());
-      })
-      .catch(() => {
-        response.status(500).send('Cannot load the database');
-      });
+      Object.keys(students)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .forEach((field) => {
+          output += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
+        });
+
+      response.status(200).send(output);
+    } catch (error) {
+      response.status(500).send('Cannot load the database');
+    }
   }
 
-  static getAllStudentsByMajor(request, response) {
-    const major = request.params.major;
+  static async getAllStudentsByMajor(request, response) {
+    const { major } = request.params;
 
     if (major !== 'CS' && major !== 'SWE') {
       response.status(500).send('Major parameter must be CS or SWE');
@@ -31,13 +31,13 @@ class StudentsController {
 
     const database = process.argv[2];
 
-    readDatabase(database)
-      .then((fields) => {
-        response.status(200).send(`List: ${fields[major].join(', ')}`);
-      })
-      .catch(() => {
-        response.status(500).send('Cannot load the database');
-      });
+    try {
+      const students = await readDatabase(database);
+
+      response.status(200).send(`List: ${students[major].join(', ')}`);
+    } catch (error) {
+      response.status(500).send('Cannot load the database');
+    }
   }
 }
 
