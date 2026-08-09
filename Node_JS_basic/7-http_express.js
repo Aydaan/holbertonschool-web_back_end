@@ -2,47 +2,45 @@ const express = require('express');
 const fs = require('fs');
 
 const app = express();
-const database = process.argv[2];
 
 app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
 });
 
 app.get('/students', (req, res) => {
+  const database = process.argv[2];
+
   fs.readFile(database, 'utf8', (err, data) => {
     if (err) {
-      res.send('Cannot load the database');
+      res.send('This is the list of our students\nCannot load the database');
       return;
     }
 
-    const lines = data
-      .split('\n')
-      .filter((line) => line.trim() !== '');
-
+    const lines = data.split('\n').filter((line) => line.trim() !== '');
     const students = lines.slice(1);
+
+    let result = 'This is the list of our students\n';
+    result += `Number of students: ${students.length}\n`;
 
     const fields = {};
 
-    students.forEach((student) => {
-      const columns = student.split(',');
-      const firstname = columns[0];
-      const field = columns[3];
+    for (const student of students) {
+      const values = student.split(',');
+      const firstname = values[0];
+      const field = values[3];
 
       if (!fields[field]) {
         fields[field] = [];
       }
 
       fields[field].push(firstname);
-    });
+    }
 
-    let response = `This is the list of our students\n`;
-    response += `Number of students: ${students.length}\n`;
+    for (const field of Object.keys(fields)) {
+      result += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
+    }
 
-    Object.keys(fields).forEach((field) => {
-      response += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-    });
-
-    res.send(response);
+    res.send(result);
   });
 });
 
