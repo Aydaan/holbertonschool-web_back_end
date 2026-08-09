@@ -8,14 +8,17 @@ export function readDatabase(filePath) {
         return;
       }
 
-      const lines = data.split('\n').filter((line) => line.trim() !== '');
+      const lines = data
+        .split('\n')
+        .filter((line) => line.trim() !== '');
+
       const students = lines.slice(1);
       const fields = {};
 
       students.forEach((student) => {
         const columns = student.split(',');
         const firstname = columns[0];
-        const field = columns[3];
+        const field = columns[3].trim();
 
         if (!fields[field]) {
           fields[field] = [];
