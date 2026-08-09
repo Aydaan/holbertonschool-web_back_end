@@ -8,11 +8,14 @@ export function readDatabase(filePath) {
         return;
       }
 
-      const lines = data.trim().split('\n');
+      const lines = data.split('\n');
       const fields = {};
 
-      // Skip the header
       for (let i = 1; i < lines.length; i += 1) {
+        if (!lines[i].trim()) {
+          continue;
+        }
+
         const [firstname, lastname, age, field] = lines[i].split(',');
 
         if (!fields[field]) {
