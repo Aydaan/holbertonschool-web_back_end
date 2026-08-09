@@ -4,11 +4,12 @@ const fs = require('fs');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.type('text').send('Hello Holberton School!');
+  res.type('text/plain');
+  res.send('Hello Holberton School!');
 });
 
 app.get('/students', (req, res) => {
-  res.type('text');
+  res.type('text/plain');
 
   fs.readFile(process.argv[2], 'utf8', (error, data) => {
     if (error) {
@@ -19,15 +20,15 @@ app.get('/students', (req, res) => {
     const lines = data.split('\n').filter((line) => line.trim() !== '');
     const students = lines.slice(1);
 
-    let output = 'This is the list of our students\n';
-    output += `Number of students: ${students.length}\n`;
+    let result = `This is the list of our students\n`;
+    result += `Number of students: ${students.length}\n`;
 
     const fields = {};
 
     students.forEach((student) => {
-      const values = student.split(',');
-      const firstname = values[0];
-      const field = values[3];
+      const columns = student.split(',');
+      const firstname = columns[0];
+      const field = columns[3];
 
       if (!fields[field]) {
         fields[field] = [];
@@ -37,10 +38,10 @@ app.get('/students', (req, res) => {
     });
 
     Object.keys(fields).forEach((field) => {
-      output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
+      result += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
     });
 
-    res.send(output);
+    res.send(result);
   });
 });
 
