@@ -17,12 +17,13 @@ function readDatabase(filePath) {
         }
 
         const [firstname, lastname, age, field] = lines[i].split(',');
+        const cleanField = field.trim();
 
-        if (!students[field]) {
-          students[field] = [];
+        if (!students[cleanField]) {
+          students[cleanField] = [];
         }
 
-        students[field].push(firstname);
+        students[cleanField].push(firstname);
       }
 
       resolve(students);
